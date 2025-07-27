@@ -1,652 +1,71 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Anderson Martins - Serviços profissionais de entregas, design gráfico e gestão de mídias sociais. Soluções rápidas e eficientes.">
-  <meta name="keywords" content="entregas, ifood, rappi, design gráfico, edição de vídeo, social media, freelancer">
-  <meta name="author" content="Anderson Martins">
-  <meta property="og:title" content="Anderson Martins | Serviços Profissionais">
-  <meta property="og:description" content="Serviços de entregas, design e gestão de mídias sociais">
-  <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <title>Anderson Martins | Serviços Profissionais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cartão Advogado</title>
   <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --secondary: #f59e0b;
-      --dark: #1e293b;
-      --light: #f8fafc;
-      --gray: #64748b;
-      --success: #10b981;
-    }
-    
-    * {
+    body, html {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f1f5f9;
-      color: var(--dark);
-      line-height: 1.6;
-    }
-
-    /* Hero Section com Foto de Fundo Profissional */
-    .hero {
-      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                  url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
-      color: white;
-      padding: 80px 20px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-content {
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      margin-bottom: 15px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin-bottom: 30px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    }
-
-    .cta-button {
-      display: inline-block;
-      background-color: var(--secondary);
-      color: var(--dark);
-      padding: 12px 30px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .cta-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      background-color: #fbbf24;
-    }
-
-    /* Navigation */
-    nav {
-      background-color: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    .nav-links a {
-      color: var(--dark);
-      text-decoration: none;
-      font-weight: 500;
-      padding: 5px 10px;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--primary);
-      background-color: #e0e7ff;
-    }
-
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--dark);
-      cursor: pointer;
-    }
-
-    /* Main Content */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 60px 20px;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .section-title h2 {
-      font-size: 2.2rem;
-      color: var(--primary);
-      margin-bottom: 15px;
-      position: relative;
-      display: inline-block;
-    }
-
-    .section-title h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background-color: var(--secondary);
-      border-radius: 2px;
-    }
-
-    .section-title p {
-      color: var(--gray);
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    /* Services */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      margin-top: 40px;
-    }
-
-    .service-card {
-      background-color: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .service-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .service-icon {
-      background-color: var(--primary);
-      color: white;
-      font-size: 2.5rem;
-      padding: 30px;
-      text-align: center;
-    }
-
-    .service-content {
-      padding: 25px;
-    }
-
-    .service-content h3 {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      color: var(--dark);
-    }
-
-    .service-content p {
-      color: var(--gray);
-      margin-bottom: 20px;
-    }
-
-    /* About */
-    .about-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: center;
-    }
-
-    .about-text h3 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: var(--primary);
-    }
-
-    .about-text p {
-      margin-bottom: 15px;
-    }
-
-    .skills {
-      margin-top: 30px;
-    }
-
-    .skill-item {
-      margin-bottom: 15px;
-    }
-
-    .skill-name {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
-    }
-
-    .skill-bar {
-      height: 8px;
-      background-color: #e2e8f0;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .skill-progress {
       height: 100%;
-      background-color: var(--primary);
-      border-radius: 4px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #000; /* fundo preto */
+      color: white;
     }
 
-    .about-image {
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .about-image img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* Contact */
-    .contact-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-    }
-
-    .contact-info {
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .contact-info h3 {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      color: var(--primary);
-    }
-
-    .contact-item {
+    .card {
       display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .contact-icon {
-      width: 50px;
-      height: 50px;
-      background-color: #e0e7ff;
-      color: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      font-size: 1.2rem;
-      margin-right: 15px;
-      flex-shrink: 0;
-    }
-
-    .contact-text h4 {
-      font-size: 1.1rem;
-      margin-bottom: 5px;
-    }
-
-    .contact-text a {
-      color: var(--gray);
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .contact-text a:hover {
-      color: var(--primary);
-    }
-
-    .contact-form {
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      font-family: 'Poppins', sans-serif;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    textarea.form-control {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .submit-btn {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-    }
-
-    .submit-btn:hover {
-      background-color: var(--primary-dark);
-    }
-
-    /* Testimonials */
-    .testimonials {
-      background-color: var(--primary);
-      color: white;
-      padding: 80px 0;
+      align-items: center;
       text-align: center;
+      height: 100vh;
+      padding: 20px;
     }
 
-    .testimonial-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    .testimonial-title {
-      margin-bottom: 50px;
-    }
-
-    .testimonial-title h2 {
-      font-size: 2.2rem;
-      margin-bottom: 15px;
-    }
-
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-    }
-
-    .testimonial-card {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 10px;
-      text-align: left;
-    }
-
-    .testimonial-text {
-      font-style: italic;
-      margin-bottom: 20px;
-    }
-
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-    }
-
-    .author-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 15px;
-    }
-
-    .author-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .author-info h4 {
-      font-size: 1.1rem;
-      margin-bottom: 5px;
-    }
-
-    .author-info p {
-      opacity: 0.8;
-      font-size: 0.9rem;
-    }
-
-    /* Footer */
-    footer {
-      background-color: var(--dark);
-      color: white;
-      padding: 50px 0 20px;
-    }
-
-    .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
-    }
-
-    .footer-col h3 {
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      position: relative;
-      padding-bottom: 10px;
-    }
-
-    .footer-col h3::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 40px;
-      height: 3px;
-      background-color: var(--secondary);
-    }
-
-    .footer-col p {
-      margin-bottom: 15px;
-      opacity: 0.8;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .social-link {
-      width: 40px;
-      height: 40px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: all 0.3s ease;
-    }
-
-    .social-link:hover {
-      background-color: var(--secondary);
-      color: var(--dark);
-      transform: translateY(-3px);
-    }
-
-    .footer-links li {
+    h1 {
+      font-size: 36px;
       margin-bottom: 10px;
-      list-style: none;
+      color: #FFD700; /* dourado elegante */
     }
 
-    .footer-links a {
-      color: white;
-      opacity: 0.8;
+    p {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .link-fixed {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFD700;
+      padding: 8px 12px;
+      border: 1px solid #FFD700;
+      border-radius: 4px;
       text-decoration: none;
-      transition: all 0.3s ease;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background 0.3s ease;
     }
 
-    .footer-links a:hover {
-      opacity: 1;
-      color: var(--secondary);
-      padding-left: 5px;
-    }
-
-    .copyright {
-      text-align: center;
-      padding-top: 30px;
-      margin-top: 30px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      opacity: 0.7;
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-      .about-content,
-      .contact-container {
-        grid-template-columns: 1fr;
-      }
-      
-      .about-image {
-        order: -1;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      
-      .nav-links {
-        display: none;
-      }
-      
-      .mobile-menu-btn {
-        display: block;
-      }
-      
-      .section-title h2 {
-        font-size: 1.8rem;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .hero {
-        padding: 60px 20px;
-      }
-      
-      .hero h1 {
-        font-size: 1.8rem;
-      }
-      
-      .service-card {
-        text-align: center;
-      }
-      
-      .service-icon {
-        padding: 20px;
-      }
+    .link-fixed:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
 <body>
-  <!-- Hero Section com Foto de Fundo Profissional -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Anderson Martins</h1>
-      <p>Soluções profissionais em entregas, design e mídias sociais</p>
-      <a href="#contact" class="cta-button">Entre em Contato</a>
-    </div>
-  </section>
+  <div class="card">
+    <h1>Dr. João Silva</h1>
+    <p>Advogado Criminalista</p>
+    <p>OAB 123456/SP</p>
+    <p>Atendimento online e presencial</p>
+    <p>Email: joaosilva@adv.br</p>
+  </div>
 
-  <!-- Navigation -->
-  <nav>
-    <div class="nav-container">
-      <a href="#" class="logo">Anderson Martins</a>
-      <div class="nav-links">
-        <a href="#home">Início</a>
-        <a href="#services">Serviços</a>
-        <a href="#about">Sobre</a>
-        <a href="#contact">Contato</a>
-      </div>
-      <button class="mobile-menu-btn">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="container">
-    <!-- Home Section -->
-    <section id="home">
-      <div class="section-title">
-        <h2>Bem-vindo ao Meu Site Profissional</h2>
-        <p>Ofereço soluções rápidas e eficientes para suas necessidades de entregas, design e gestão de mídias sociais.</p>
-      </div>
-      <div class="about-content">
-        <div class="about-text">
-          <h3>Transformando ideias em resultados</h3>
-          <p>Com anos de experiência no mercado, ajudo clientes e empresas a alcançarem seus objetivos através de serviços especializados e personalizados.</p>
-          <p>Minha abordagem combina eficiência, criatividade e atenção aos detalhes para entregar os melhores resultados em cada projeto.</p>
-          <div class="skills">
-            <div class="skill-item">
-              <div class="skill-name">
-                <span>Entregas</span>
-                <span>95%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" style="width: 95%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">
-                <span>
+  <a href="https://wa.me/5511999999999" target="_blank" class="link-fixed">
+    Fale comigo
+  </a>
+</body>
+</html>
