@@ -2,65 +2,78 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Currículo - Sebastiao Anderson</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Currículo - Sebastião Anderson</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-black text-white font-sans">
+<body class="bg-black text-white font-sans min-h-screen flex flex-col">
+
   <!-- Parte Laranja -->
-  <div class="bg-orange-500 text-black p-8" style="height: 40vh">
-    <h1 class="text-4xl font-bold">Sebastiao Anderson Ap Martins</h1>
+  <div class="bg-orange-500 text-black p-8 flex flex-col justify-center" style="height: 40vh;">
+    <h1 class="text-4xl font-bold">Sebastião Anderson Ap Martins</h1>
     <p class="mt-2">Telefone / WhatsApp: (11) 94183-1006</p>
     <p>E-mail: am9286121@gmai.com</p>
   </div>
 
   <!-- Parte Preta -->
-  <div class="bg-black text-white p-8 space-y-8" style="min-height: 60vh">
-    <!-- Experiência Profissional -->
-    <section>
-      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Experiência Profissional</h2>
-      <ul class="space-y-4">
-        <li>
-          <p class="font-bold">Tecnoport Serviços Gerais</p>
-          <p class="text-sm">Controlador de Acesso – 01/06/2024 - Em aberto</p>
-        </li>
-        <li>
-          <p class="font-bold">Beta Clean & Service LTDA</p>
-          <p class="text-sm">Controlador de Acesso – 19/12/2021 - 05/08/2022</p>
-        </li>
-        <li>
-          <p class="font-bold">Progresso e Desenvolvimento de Guarulhos SA (Proguaru)</p>
-          <p class="text-sm">Controlador de Acesso – 04/11/2020 - 15/12/2021</p>
-        </li>
-      </ul>
-    </section>
+  <div class="bg-black p-8 flex-1 flex flex-col justify-between">
 
-    <!-- Formação -->
-    <section>
-      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Formação</h2>
-      <p>Ensino Médio Completo</p>
-    </section>
+    <div>
+      <!-- Experiência Profissional -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Experiência Profissional</h2>
+        <ul class="space-y-4 list-disc list-inside text-white">
+          <li>
+            <p class="font-bold">Tecnoport Serviços Gerais</p>
+            <p class="text-sm">Controlador de Acesso – 01/06/2024 - Em aberto</p>
+          </li>
+          <li>
+            <p class="font-bold">Beta Clean & Service LTDA</p>
+            <p class="text-sm">Controlador de Acesso – 19/12/2021 - 05/08/2022</p>
+          </li>
+          <li>
+            <p class="font-bold">Progresso e Desenvolvimento de Guarulhos SA (Proguaru)</p>
+            <p class="text-sm">Controlador de Acesso – 04/11/2020 - 15/12/2021</p>
+          </li>
+        </ul>
+      </section>
 
-    <!-- Cursos Complementares -->
-    <section>
-      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Cursos Complementares</h2>
-      <p>Metrologia e Inspeção de Qualidade – Escola Delta</p>
-    </section>
+      <!-- Formação -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Formação</h2>
+        <p>Ensino Médio Completo</p>
+      </section>
 
-    <!-- Habilidades -->
-    <section>
-      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Habilidades</h2>
-      <ul class="list-disc list-inside">
-        <li>Tratamento com o público</li>
-        <li>Atendimento ao cliente</li>
-      </ul>
-    </section>
+      <!-- Cursos Complementares -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Cursos Complementares</h2>
+        <p>Metrologia e Inspeção de Qualidade – Escola Delta</p>
+      </section>
 
-    <!-- Apresentação -->
-    <section>
-      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Apresentação</h2>
-      <p>Sou um profissional dedicado, pontual e comprometido com as atividades que desempenho. Tenho facilidade em trabalhar em equipe, boa comunicação e sou focado em oferecer um bom atendimento ao público.</p>
-    </section>
-  </div>
-</body>
-</html>
+      <!-- Habilidades -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Habilidades</h2>
+        <ul class="list-disc list-inside">
+          <li>Tratamento com o público</li>
+          <li>Atendimento ao cliente</li>
+        </ul>
+      </section>
+
+      <!-- Apresentação -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Apresentação</h2>
+        <p>Sou um profissional dedicado, pontual e comprometido com as atividades que desempenho. Tenho facilidade em trabalhar em equipe, boa comunicação e sou focado em oferecer um bom atendimento ao público.</p>
+      </section>
+    </div>
+
+    <!-- Botão Fale comigo -->
+    <div class="flex justify-center">
+      <a
+        href="https://wa.me/5511941831006"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg text-lg transition duration-300"
+      >
+        <!-- Ícone do WhatsApp -->
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M16.001 2.985c-7.284 0-13.193 5.909-13.193 13.193 0 2.332.61 4.611 1.77 6.627l-1.878 6.865 7.03-1.846c1.904 1.037 4.056 1.584 6.271 1.584h.001c7.283 0 13.192-5.909 13.192-13.193 0-3.525-1.373-6.837-3.867-9.33-2.494-2.494-5.805-3.9-9.326-3.9zm-.001 23.832h-.001c-1.884 0-3.725-.499-5.339-1.444l-.383-.223-4.17 1.093 1.112-4.029-.25-.41c-1.096-1.796-1.676-3.857-1.676-5.963 0-6.36 5.177-11.537 11.538-11.537 3.087 0 5.987 1.203 8.167 3.383 2.181 2
