@@ -1,71 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cartão Desenvolvedor</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #000;
-      color: white;
-    }
-
-    .card {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      height: 100vh;
-      padding: 20px;
-    }
-
-    h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
-      color: #FFD700;
-    }
-
-    p {
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
-
-    .link-fixed {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #FFD700;
-      padding: 8px 12px;
-      border: 1px solid #FFD700;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
-      transition: background 0.3s ease;
-    }
-
-    .link-fixed:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currículo - Sebastiao Anderson</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="card">
-    <h1>Martins</h1>
-    <p>Segurança Cibernética</p>
-    <p>Atendimento online e presencial</p>
-    <p>Email: am9286121@gmail.com</p>
-    <p>Fone / WhatsApp: (11) 94183-1006</p>
+<body class="bg-black text-white font-sans">
+  <!-- Parte Laranja -->
+  <div class="bg-orange-500 text-black p-8" style="height: 40vh">
+    <h1 class="text-4xl font-bold">Sebastiao Anderson Ap Martins</h1>
+    <p class="mt-2">Telefone / WhatsApp: (11) 94183-1006</p>
+    <p>E-mail: am9286121@gmai.com</p>
   </div>
 
-  <a href="https://wa.me/5511941831006?text=Olá%2C%20gostaria%20de%20falar%20sobre%20seus%20serviços%20de%20segurança%20cibernética." target="_blank" class="link-fixed">
-    Fale comigo
-  </a>
+  <!-- Parte Preta -->
+  <div class="bg-black text-white p-8 space-y-8" style="min-height: 60vh">
+    <!-- Experiência Profissional -->
+    <section>
+      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Experiência Profissional</h2>
+      <ul class="space-y-4">
+        <li>
+          <p class="font-bold">Tecnoport Serviços Gerais</p>
+          <p class="text-sm">Controlador de Acesso – 01/06/2024 - Em aberto</p>
+        </li>
+        <li>
+          <p class="font-bold">Beta Clean & Service LTDA</p>
+          <p class="text-sm">Controlador de Acesso – 19/12/2021 - 05/08/2022</p>
+        </li>
+        <li>
+          <p class="font-bold">Progresso e Desenvolvimento de Guarulhos SA (Proguaru)</p>
+          <p class="text-sm">Controlador de Acesso – 04/11/2020 - 15/12/2021</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Formação -->
+    <section>
+      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Formação</h2>
+      <p>Ensino Médio Completo</p>
+    </section>
+
+    <!-- Cursos Complementares -->
+    <section>
+      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Cursos Complementares</h2>
+      <p>Metrologia e Inspeção de Qualidade – Escola Delta</p>
+    </section>
+
+    <!-- Habilidades -->
+    <section>
+      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Habilidades</h2>
+      <ul class="list-disc list-inside">
+        <li>Tratamento com o público</li>
+        <li>Atendimento ao cliente</li>
+      </ul>
+    </section>
+
+    <!-- Apresentação -->
+    <section>
+      <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Apresentação</h2>
+      <p>Sou um profissional dedicado, pontual e comprometido com as atividades que desempenho. Tenho facilidade em trabalhar em equipe, boa comunicação e sou focado em oferecer um bom atendimento ao público.</p>
+    </section>
+  </div>
 </body>
 </html>
