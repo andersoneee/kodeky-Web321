@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -173,6 +174,13 @@
             margin-bottom: 10px;
         }
 
+        .btn-login {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
         /* ALERTAS */
         .alertas {
             margin-bottom: 20px;
@@ -190,6 +198,7 @@
         .alerta.critico {
             background: linear-gradient(90deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.1));
             border: 1px solid rgba(220, 38, 38, 0.3);
+            animation: pulse-alerta 2s infinite;
         }
 
         .alerta.atencao {
@@ -206,6 +215,7 @@
         .ponto-alerta.critico {
             background: var(--danger);
             box-shadow: 0 0 10px var(--danger);
+            animation: pulse-ponto 2s infinite;
         }
 
         .ponto-alerta.atencao {
@@ -213,9 +223,84 @@
             box-shadow: 0 0 10px var(--warning);
         }
 
+        /* MODAL LOGIN */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .modal-botoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-confirmar {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-cancelar {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+
+        @keyframes pulse-alerta {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+            }
+            50% { 
+                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+            }
+        }
+
+        @keyframes pulse-ponto {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px var(--danger);
+            }
+            50% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 20px var(--danger);
+            }
         }
 
         /* RESPONSIVO */
@@ -231,6 +316,10 @@
             .header {
                 padding: 15px;
             }
+            
+            .modal-botoes {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -243,9 +332,13 @@
             <div class="clock" id="clock">--/--/---- --:--:--</div>
         </div>
 
-        <!-- BOTÃO RELATÓRIO -->
+        <!-- BOTÕES SUPERIORES -->
         <button class="btn-relatorio" onclick="gerarRelatorio()">
             📊 GERAR RELATÓRIO COMPLETO
+        </button>
+        
+        <button class="btn-login" onclick="abrirLogin()" id="btnLogin">
+            🔑 ACESSO ADMINISTRADOR
         </button>
 
         <!-- ESTOQUE -->
@@ -253,8 +346,8 @@
             <!-- Itens carregados via JavaScript -->
         </div>
 
-        <!-- CONTROLES -->
-        <div class="controles">
+        <!-- CONTROLES (SÓ VISÍVEL PARA ADMIN) -->
+        <div class="controles" id="controles" style="display: none;">
             <div class="input-group">
                 <select id="selectProduto">
                     <option value="">Selecione o medicamento</option>
@@ -273,6 +366,18 @@
         </div>
     </div>
 
+    <!-- MODAL LOGIN -->
+    <div class="modal" id="modalLogin">
+        <div class="modal-content">
+            <h2>🔒 ACESSO ADMINISTRADOR</h2>
+            <input type="password" id="senhaAdmin" class="modal-input" placeholder="Digite a senha" onkeypress="verificarEnter(event)">
+            <div class="modal-botoes">
+                <button class="btn-confirmar" onclick="verificarSenha()">✅ CONFIRMAR</button>
+                <button class="btn-cancelar" onclick="fecharLogin()">❌ CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // DADOS EXEMPLO - MEDICAMENTOS HOSPITALARES
         const medicamentos = [
@@ -283,6 +388,10 @@
             { nome: "Máscara Cirúrgica", quantidade: 120, categoria: "EPI", minimo: 100 },
             { nome: "Insulina Regular", quantidade: 5, categoria: "Hormonal", minimo: 8 }
         ];
+
+        // SENHA DO ADMINISTRADOR (pode ser alterada)
+        const SENHA_ADMIN = "upa123";
+        let adminLogado = false;
 
         // ATUALIZAR RELÓGIO
         function atualizarRelogio() {
@@ -319,11 +428,13 @@
                 `;
                 container.appendChild(item);
                 
-                // Option no select
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = med.nome;
-                select.appendChild(option);
+                // Option no select (só se for admin)
+                if (adminLogado) {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = med.nome;
+                    select.appendChild(option);
+                }
             });
             
             carregarAlertas();
@@ -360,8 +471,49 @@
             });
         }
 
+        // FUNÇÕES DE LOGIN
+        function abrirLogin() {
+            document.getElementById('modalLogin').style.display = 'flex';
+            document.getElementById('senhaAdmin').focus();
+        }
+
+        function fecharLogin() {
+            document.getElementById('modalLogin').style.display = 'none';
+            document.getElementById('senhaAdmin').value = '';
+        }
+
+        function verificarEnter(event) {
+            if (event.key === 'Enter') {
+                verificarSenha();
+            }
+        }
+
+        function verificarSenha() {
+            const senha = document.getElementById('senhaAdmin').value;
+            
+            if (senha === SENHA_ADMIN) {
+                adminLogado = true;
+                document.getElementById('controles').style.display = 'block';
+                document.getElementById('btnLogin').textContent = '🔓 ADMINISTRADOR LOGADO';
+                document.getElementById('btnLogin').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                fecharLogin();
+                carregarEstoque(); // Recarrega para mostrar os selects
+                alert('✅ Acesso administrativo concedido!');
+            } else {
+                alert('❌ Senha incorreta! Acesso negado.');
+                document.getElementById('senhaAdmin').value = '';
+                document.getElementById('senhaAdmin').focus();
+            }
+        }
+
         // ENTRADA NO ESTOQUE
         function entradaEstoque() {
+            if (!adminLogado) {
+                alert('🔒 Acesso restrito! Faça login como administrador.');
+                abrirLogin();
+                return;
+            }
+            
             const select = document.getElementById('selectProduto');
             const input = document.getElementById('inputQuantidade');
             const index = parseInt(select.value);
@@ -380,6 +532,12 @@
 
         // SAÍDA DO ESTOQUE
         function saidaEstoque() {
+            if (!adminLogado) {
+                alert('🔒 Acesso restrito! Faça login como administrador.');
+                abrirLogin();
+                return;
+            }
+            
             const select = document.getElementById('selectProduto');
             const input = document.getElementById('inputQuantidade');
             const index = parseInt(select.value);
