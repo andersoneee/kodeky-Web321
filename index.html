@@ -1,88 +1,423 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Currículo - Sebastião Anderson</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumStock • UPA Guarulhos</title>
+    <style>
+        :root {
+            --primary: #1e40af;  /* AZUL SAÚDE */
+            --primary-dark: #1e3a8a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .clock {
+            margin-top: 10px;
+            font-size: 13px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* CARDS DE ESTOQUE */
+        .estoque-grid {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .item-estoque {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--success);
+            transition: all 0.3s ease;
+        }
+
+        .item-estoque.critico {
+            border-left-color: var(--danger);
+            animation: pulse 2s infinite;
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.1), var(--card));
+        }
+
+        .item-estoque.alerta {
+            border-left-color: var(--warning);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), var(--card));
+        }
+
+        .info-produto h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .categoria {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .quantidade {
+            text-align: right;
+        }
+
+        .valor {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .unidade {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* CONTROLES */
+        .controles {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        select, input {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .botoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-entrada {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-saida {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: white;
+        }
+
+        .btn-relatorio {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* ALERTAS */
+        .alertas {
+            margin-bottom: 20px;
+        }
+
+        .alerta {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alerta.critico {
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .alerta.atencao {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .ponto-alerta {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ponto-alerta.critico {
+            background: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+        }
+
+        .ponto-alerta.atencao {
+            background: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 380px) {
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .botoes {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-black text-white font-sans min-h-screen flex flex-col">
+<body>
+    <div class="container">
+        <!-- HEADER PERSONALIZADO -->
+        <div class="header">
+            <div class="logo">🏥 UPA Guarulhos</div>
+            <div class="subtitle">Controle Inteligente de Medicamentos</div>
+            <div class="clock" id="clock">--/--/---- --:--:--</div>
+        </div>
 
-  <!-- Parte Laranja -->
-  <div class="bg-orange-500 text-black p-8 flex flex-col justify-center" style="height: 40vh;">
-    <h1 class="text-4xl font-bold">Sebastião Anderson Ap Martins</h1>
-    <p class="mt-2">Telefone / WhatsApp: (11) 94183-1006</p>
-    <p>E-mail: am9286121@gmai.com</p>
-  </div>
+        <!-- BOTÃO RELATÓRIO -->
+        <button class="btn-relatorio" onclick="gerarRelatorio()">
+            📊 GERAR RELATÓRIO COMPLETO
+        </button>
 
-  <!-- Parte Preta -->
-  <div class="bg-black p-8 flex-1 flex flex-col justify-between">
+        <!-- ESTOQUE -->
+        <div class="estoque-grid" id="estoqueList">
+            <!-- Itens carregados via JavaScript -->
+        </div>
 
-    <div>
-      <!-- Experiência Profissional -->
-      <section class="mb-8">
-        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Experiência Profissional</h2>
-        <ul class="space-y-4 list-disc list-inside text-white">
-          <li>
-            <p class="font-bold">Tecnoport Serviços Gerais</p>
-            <p class="text-sm">Controlador de Acesso – 01/06/2024 - Em aberto</p>
-          </li>
-          <li>
-            <p class="font-bold">Beta Clean & Service LTDA</p>
-            <p class="text-sm">Controlador de Acesso – 19/12/2021 - 05/08/2022</p>
-          </li>
-          <li>
-            <p class="font-bold">Progresso e Desenvolvimento de Guarulhos SA (Proguaru)</p>
-            <p class="text-sm">Controlador de Acesso – 04/11/2020 - 15/12/2021</p>
-          </li>
-        </ul>
-      </section>
+        <!-- CONTROLES -->
+        <div class="controles">
+            <div class="input-group">
+                <select id="selectProduto">
+                    <option value="">Selecione o medicamento</option>
+                </select>
+                <input type="number" id="inputQuantidade" placeholder="Qtd" min="1" value="1">
+            </div>
+            <div class="botoes">
+                <button class="btn-entrada" onclick="entradaEstoque()">➕ ENTRADA</button>
+                <button class="btn-saida" onclick="saidaEstoque()">➖ SAÍDA</button>
+            </div>
+        </div>
 
-      <!-- Formação -->
-      <section class="mb-8">
-        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Formação</h2>
-        <p>Ensino Médio Completo</p>
-      </section>
-
-      <!-- Cursos Complementares -->
-      <section class="mb-8">
-        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Cursos Complementares</h2>
-        <p>Metrologia e Inspeção de Qualidade – Escola Delta</p>
-      </section>
-
-      <!-- Habilidades -->
-      <section class="mb-8">
-        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Habilidades</h2>
-        <ul class="list-disc list-inside">
-          <li>Tratamento com o público</li>
-          <li>Atendimento ao cliente</li>
-        </ul>
-      </section>
-
-      <!-- Apresentação -->
-      <section class="mb-8">
-        <h2 class="text-2xl font-semibold border-b border-white mb-4 pb-1">Apresentação</h2>
-        <p>Sou um profissional dedicado, pontual e comprometido com as atividades que desempenho. Tenho facilidade em trabalhar em equipe, boa comunicação e sou focado em oferecer um bom atendimento ao público.</p>
-      </section>
+        <!-- ALERTAS -->
+        <div class="alertas" id="alertasContainer">
+            <!-- Alertas carregados via JavaScript -->
+        </div>
     </div>
 
-    <!-- Botão Fale comigo -->
-    <div class="flex justify-center">
-      <a
-        href="https://wa.me/5511941831006"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg text-lg transition duration-300"
-      >
-        <!-- Ícone do WhatsApp com cor branca -->
-        <svg class="w-6 h-6 text-white" viewBox="0 0 32 32" aria-hidden="true" focusable="false" fill="currentColor">
-          <path d="M16.001 2.985c-7.284 0-13.193 5.909-13.193 13.193 0 2.332.61 4.611 1.77 6.627l-1.878 6.865 7.03-1.846c1.904 1.037 4.056 1.584 6.271 1.584h.001c7.283 0 13.192-5.909 13.192-13.193 0-3.525-1.373-6.837-3.867-9.33-2.494-2.494-5.805-3.9-9.326-3.9zm-.001 23.832h-.001c-1.884 0-3.725-.499-5.339-1.444l-.383-.223-4.17 1.093 1.112-4.029-.25-.41c-1.096-1.796-1.676-3.857-1.676-5.963 0-6.36 5.177-11.537 11.538-11.537 3.087 0 5.987 1.203 8.167 3.383 2.181 2.181 3.383 5.08 3.383 8.168 0 6.36-5.177 11.537-11.537 11.537zm6.318-8.623c-.348-.174-2.063-1.018-2.384-1.134-.32-.117-.553-.174-.786.174-.233.348-.9 1.134-1.105 1.368-.204.233-.408.262-.756.087-.348-.174-1.47-.542-2.798-1.73-1.035-.923-1.735-2.063-1.938-2.412-.204-.348-.022-.535.152-.709.156-.156.348-.408.522-.61.174-.204.233-.348.348-.582.116-.233.058-.437-.029-.61-.087-.174-.786-1.895-1.077-2.597-.283-.679-.571-.586-.786-.597l-.67-.012c-.232 0-.61.087-.928.437s-1.219 1.191-1.219 2.907 1.248 3.37 1.421 3.602c.174.233 2.455 3.748 5.951 5.252.832.359 1.48.573 1.985.733.834.266 1.592.229 2.19.139.668-.099 2.063-.844 2.354-1.658.291-.814.291-1.51.204-1.658-.087-.145-.319-.233-.668-.407z"/>
-        </svg>
+    <script>
+        // DADOS EXEMPLO - MEDICAMENTOS HOSPITALARES
+        const medicamentos = [
+            { nome: "Dipirona 1g", quantidade: 15, categoria: "Analgésico", minimo: 20 },
+            { nome: "Paracetamol 750mg", quantidade: 8, categoria: "Analgésico", minimo: 15 },
+            { nome: "Soro Fisiológico 500ml", quantidade: 3, categoria: "Soros", minimo: 10 },
+            { nome: "Luvas Descartáveis", quantidade: 45, categoria: "EPI", minimo: 50 },
+            { nome: "Máscara Cirúrgica", quantidade: 120, categoria: "EPI", minimo: 100 },
+            { nome: "Insulina Regular", quantidade: 5, categoria: "Hormonal", minimo: 8 }
+        ];
 
-        Fale comigo no WhatsApp
-      </a>
-    </div>
-  </div>
+        // ATUALIZAR RELÓGIO
+        function atualizarRelogio() {
+            const agora = new Date();
+            document.getElementById('clock').textContent = 
+                agora.toLocaleDateString('pt-BR') + ' ' + 
+                agora.toLocaleTimeString('pt-BR');
+            setTimeout(atualizarRelogio, 1000);
+        }
 
+        // CARREGAR ESTOQUE
+        function carregarEstoque() {
+            const container = document.getElementById('estoqueList');
+            const select = document.getElementById('selectProduto');
+            
+            container.innerHTML = '';
+            select.innerHTML = '<option value="">Selecione o medicamento</option>';
+            
+            medicamentos.forEach((med, index) => {
+                // Item no estoque
+                const item = document.createElement('div');
+                item.className = `item-estoque ${med.quantidade <= med.minimo/2 ? 'critico' : 
+                                 med.quantidade <= med.minimo ? 'alerta' : ''}`;
+                
+                item.innerHTML = `
+                    <div class="info-produto">
+                        <h3>${med.nome}</h3>
+                        <div class="categoria">${med.categoria}</div>
+                    </div>
+                    <div class="quantidade">
+                        <div class="valor">${med.quantidade}</div>
+                        <div class="unidade">unidades</div>
+                    </div>
+                `;
+                container.appendChild(item);
+                
+                // Option no select
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = med.nome;
+                select.appendChild(option);
+            });
+            
+            carregarAlertas();
+        }
+
+        // CARREGAR ALERTAS
+        function carregarAlertas() {
+            const container = document.getElementById('alertasContainer');
+            container.innerHTML = '';
+            
+            const alertas = medicamentos.filter(med => med.quantidade <= med.minimo);
+            
+            if (alertas.length === 0) {
+                container.innerHTML = `
+                    <div class="alerta" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                        <div class="ponto-alerta" style="background: #10b981;"></div>
+                        <div>✅ Todos os medicamentos em ordem!</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            alertas.forEach(med => {
+                const alerta = document.createElement('div');
+                alerta.className = `alerta ${med.quantidade <= med.minimo/2 ? 'critico' : 'atencao'}`;
+                alerta.innerHTML = `
+                    <div class="ponto-alerta ${med.quantidade <= med.minimo/2 ? 'critico' : 'atencao'}"></div>
+                    <div>
+                        ${med.quantidade <= med.minimo/2 ? '🚨 CRÍTICO' : '⚠️ ATENÇÃO'}: 
+                        ${med.nome} - ${med.quantidade} unidades
+                    </div>
+                `;
+                container.appendChild(alerta);
+            });
+        }
+
+        // ENTRADA NO ESTOQUE
+        function entradaEstoque() {
+            const select = document.getElementById('selectProduto');
+            const input = document.getElementById('inputQuantidade');
+            const index = parseInt(select.value);
+            const quantidade = parseInt(input.value);
+            
+            if (isNaN(index) || isNaN(quantidade) || quantidade <= 0) {
+                alert('Selecione um medicamento e informe uma quantidade válida!');
+                return;
+            }
+            
+            medicamentos[index].quantidade += quantidade;
+            input.value = 1;
+            carregarEstoque();
+            alert(`✅ ${quantidade} ${medicamentos[index].nome} adicionados ao estoque!`);
+        }
+
+        // SAÍDA DO ESTOQUE
+        function saidaEstoque() {
+            const select = document.getElementById('selectProduto');
+            const input = document.getElementById('inputQuantidade');
+            const index = parseInt(select.value);
+            const quantidade = parseInt(input.value);
+            
+            if (isNaN(index) || isNaN(quantidade) || quantidade <= 0) {
+                alert('Selecione um medicamento e informe uma quantidade válida!');
+                return;
+            }
+            
+            if (medicamentos[index].quantidade < quantidade) {
+                alert(`❌ Estoque insuficiente! Disponível: ${medicamentos[index].quantidade}`);
+                return;
+            }
+            
+            medicamentos[index].quantidade -= quantidade;
+            input.value = 1;
+            carregarEstoque();
+            alert(`✅ ${quantidade} ${medicamentos[index].nome} retirados do estoque!`);
+        }
+
+        // GERAR RELATÓRIO
+        function gerarRelatorio() {
+            const agora = new Date();
+            let relatorio = `📋 RELATÓRIO UPA GUARULHOS\n${agora.toLocaleString('pt-BR')}\n\n`;
+            
+            medicamentos.forEach(med => {
+                const status = med.quantidade <= med.minimo/2 ? '🚨 CRÍTICO' : 
+                             med.quantidade <= med.minimo ? '⚠️ ALERTA' : '✅ NORMAL';
+                relatorio += `${med.nome}: ${med.quantidade} unidades - ${status}\n`;
+            });
+            
+            alert(relatorio);
+        }
+
+        // INICIALIZAR
+        atualizarRelogio();
+        carregarEstoque();
+    </script>
 </body>
 </html>
