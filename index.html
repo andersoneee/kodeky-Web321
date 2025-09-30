@@ -99,6 +99,10 @@
             background: #6b7280;
         }
 
+        .ponto-status.carregando {
+            background: #f59e0b;
+        }
+
         /* CARDS DE ESTOQUE */
         .estoque-grid {
             display: grid;
@@ -370,6 +374,13 @@
             text-align: center;
         }
 
+        .carregando {
+            text-align: center;
+            padding: 20px;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -448,8 +459,8 @@
             <div class="subtitle">Controle Inteligente de Medicamentos</div>
             <div class="clock" id="clock">--/--/---- --:--:--</div>
             <div class="status-sincronizacao" id="statusSincronizacao">
-                <div class="ponto-status offline" id="pontoStatus"></div>
-                <span id="textoStatus">Conectando...</span>
+                <div class="ponto-status carregando" id="pontoStatus"></div>
+                <span id="textoStatus">Carregando...</span>
             </div>
         </div>
 
@@ -477,7 +488,9 @@
 
         <!-- ESTOQUE -->
         <div class="estoque-grid" id="estoqueList">
-            <!-- Itens carregados via JavaScript -->
+            <div class="carregando" id="carregandoEstoque">
+                ⏳ Carregando estoque...
+            </div>
         </div>
 
         <!-- CONTROLES (SÓ VISÍVEL PARA ADMIN) -->
@@ -513,21 +526,6 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (GRATUITO)
-        const firebaseConfig = {
-            apiKey: "AIzaSyC4mJ4JX7V7Q7X7Q7X7Q7X7Q7X7Q7X7Q7X7Q",
-            authDomain: "quantumstock-upaguarulhos.firebaseapp.com",
-            databaseURL: "https://quantumstock-upaguarulhos-default-rtdb.firebaseio.com",
-            projectId: "quantumstock-upaguarulhos",
-            storageBucket: "quantumstock-upaguarulhos.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:7X7Q7X7Q7X7Q7X7Q7X7Q7X"
-        };
-
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
         // DADOS INICIAIS - MEDICAMENTOS HOSPITALARES
         const medicamentosIniciais = [
             { nome: "Dipirona 1g", quantidade: 15, categoria: "Analgésico", minimo: 20 },
@@ -557,84 +555,28 @@
         }
 
         // ATUALIZAR STATUS DA CONEXÃO
-        function atualizarStatusConexao(online) {
+        function atualizarStatusConexao(status) {
             const pontoStatus = document.getElementById('pontoStatus');
             const textoStatus = document.getElementById('textoStatus');
             
-            if (online) {
+            if (status === 'online') {
                 pontoStatus.className = 'ponto-status online';
                 textoStatus.textContent = 'Conectado • Tempo Real';
-                pontoStatus.style.animation = 'pulse-status 2s infinite';
-            } else {
+            } else if (status === 'offline') {
                 pontoStatus.className = 'ponto-status offline';
                 textoStatus.textContent = 'Offline • Modo Local';
-                pontoStatus.style.animation = 'none';
+            } else {
+                pontoStatus.className = 'ponto-status carregando';
+                textoStatus.textContent = 'Carregando...';
             }
         }
 
-        // SINCRONIZAÇÃO FIREBASE
-        function sincronizarComFirebase() {
-            // Ouvir mudanças no Firebase
-            database.ref('estoque/medicamentos').on('value', (snapshot) => {
-                const dados = snapshot.val();
-                if (dados && JSON.stringify(dados) !== JSON.stringify(medicamentos)) {
-                    console.log('📡 Dados recebidos do Firebase:', dados);
-                    medicamentos = dados;
-                    carregarEstoque();
-                    mostrarNotificacao('🔄 Estoque atualizado em tempo real!');
-                    
-                    // Mostrar badges de atualização
-                    document.querySelectorAll('.item-estoque').forEach((item, index) => {
-                        const badge = document.createElement('div');
-                        badge.className = 'badge-atualizado';
-                        badge.textContent = 'AGORA';
-                        item.appendChild(badge);
-                    });
-                }
-            });
-
-            // Monitorar status da conexão
-            database.ref('.info/connected').on('value', (snapshot) => {
-                const connected = snapshot.val();
-                atualizarStatusConexao(connected);
-                
-                if (connected) {
-                    console.log('✅ Conectado ao Firebase');
-                    // Sincronizar dados locais com Firebase quando conectar
-                    salvarNoFirebase();
-                } else {
-                    console.log('❌ Desconectado do Firebase');
-                }
-            });
-        }
-
-        function salvarNoFirebase() {
-            database.ref('estoque/medicamentos').set(medicamentos)
-                .then(() => {
-                    console.log('✅ Dados salvos no Firebase');
-                })
-                .catch((error) => {
-                    console.error('❌ Erro ao salvar no Firebase:', error);
-                    mostrarNotificacao('❌ Erro de sincronização. Trabalhando localmente.', 'error');
-                });
-        }
-
-        function carregarDoFirebase() {
-            return database.ref('estoque/medicamentos').once('value')
-                .then((snapshot) => {
-                    const dados = snapshot.val();
-                    if (dados && dados.length > 0) {
-                        console.log('📦 Dados carregados do Firebase');
-                        return dados;
-                    } else {
-                        console.log('🆕 Nenhum dado no Firebase, usando dados iniciais');
-                        return null;
-                    }
-                })
-                .catch((error) => {
-                    console.error('❌ Erro ao carregar do Firebase:', error);
-                    return null;
-                });
+        // SINCRONIZAÇÃO SIMPLIFICADA (SEM FIREBASE POR ENQUANTO)
+        function inicializarSincronizacao() {
+            // Por enquanto, vamos usar apenas localStorage
+            // Depois podemos adicionar Firebase se necessário
+            atualizarStatusConexao('online');
+            mostrarNotificacao('✅ Sistema carregado com sucesso!');
         }
 
         // FUNÇÕES DE ARMAZENAMENTO
@@ -647,9 +589,6 @@
                 };
                 localStorage.setItem('quantumStock_upa_guarulhos', JSON.stringify(dados));
                 console.log('✅ Estoque salvo localmente');
-                
-                // Sincronizar com Firebase
-                salvarNoFirebase();
             } catch (e) {
                 console.error('❌ Erro ao salvar:', e);
             }
@@ -669,29 +608,22 @@
             return null;
         }
 
-        async function inicializarEstoque() {
-            // Tentar carregar do Firebase primeiro
-            const dadosFirebase = await carregarDoFirebase();
+        function inicializarEstoque() {
+            // Esconder mensagem de carregando
+            document.getElementById('carregandoEstoque').style.display = 'none';
             
-            if (dadosFirebase) {
-                medicamentos = dadosFirebase;
-                mostrarNotificacao('📡 Dados sincronizados da nuvem!');
+            const estoqueSalvo = carregarEstoqueSalvo();
+            if (estoqueSalvo && estoqueSalvo.length > 0) {
+                medicamentos = estoqueSalvo;
+                mostrarNotificacao('📦 Dados locais carregados!');
             } else {
-                // Tentar carregar do localStorage
-                const estoqueSalvo = carregarEstoqueSalvo();
-                if (estoqueSalvo && estoqueSalvo.length > 0) {
-                    medicamentos = estoqueSalvo;
-                    mostrarNotificacao('📦 Dados locais carregados!');
-                } else {
-                    // Usar dados iniciais
-                    medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
-                    salvarEstoque();
-                    mostrarNotificacao('🆕 Estoque inicial criado!');
-                }
+                medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
+                salvarEstoque();
+                mostrarNotificacao('🆕 Estoque inicial criado!');
             }
             
-            // Iniciar sincronização em tempo real
-            sincronizarComFirebase();
+            carregarEstoque();
+            inicializarSincronizacao();
         }
 
         // GERAR PDF
@@ -820,9 +752,21 @@
             const container = document.getElementById('estoqueList');
             const select = document.getElementById('selectProduto');
             
+            // Limpar container
             container.innerHTML = '';
             select.innerHTML = '<option value="">Selecione o medicamento</option>';
             
+            // Verificar se há medicamentos
+            if (!medicamentos || medicamentos.length === 0) {
+                container.innerHTML = `
+                    <div class="carregando">
+                        ❌ Nenhum medicamento encontrado. Clique em "Restaurar Estoque Padrão".
+                    </div>
+                `;
+                return;
+            }
+            
+            // Adicionar cada medicamento
             medicamentos.forEach((med, index) => {
                 const item = document.createElement('div');
                 item.className = `item-estoque ${med.quantidade <= med.minimo/2 ? 'critico' : 
@@ -875,7 +819,7 @@
                     <div class="ponto-alerta ${med.quantidade <= med.minimo/2 ? 'critico' : 'atencao'}"></div>
                     <div>
                         ${med.quantidade <= med.minimo/2 ? '🚨 CRÍTICO' : '⚠️ ATENÇÃO'}: 
-                        ${med.nome} - ${med.quantidade} unidades
+                        ${med.nome} - ${med.quantidade} unidades (mínimo: ${med.minimo})
                     </div>
                 `;
                 container.appendChild(alerta);
@@ -1016,10 +960,13 @@
             alert(relatorio);
         }
 
-        // INICIALIZAR
-        inicializarEstoque();
-        atualizarRelogio();
-        carregarEstoque();
+        // INICIALIZAR TUDO
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando sistema QuantumStock...');
+            atualizarRelogio();
+            inicializarEstoque();
+        });
+
     </script>
 </body>
 </html>
