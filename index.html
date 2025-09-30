@@ -154,9 +154,14 @@
 
         .input-group {
             display: grid;
-            grid-template-columns: 1fr auto;
             gap: 10px;
             margin-bottom: 15px;
+        }
+
+        .input-group-duplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         select, input, textarea {
@@ -171,6 +176,12 @@
         .botoes {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .botoes-triplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
         }
 
@@ -190,6 +201,11 @@
 
         .btn-saida {
             background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: white;
+        }
+
+        .btn-novo {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
         }
 
@@ -376,7 +392,13 @@
             .input-group {
                 grid-template-columns: 1fr;
             }
+            .input-group-duplo {
+                grid-template-columns: 1fr;
+            }
             .botoes {
+                grid-template-columns: 1fr;
+            }
+            .botoes-triplo {
                 grid-template-columns: 1fr;
             }
             .modal-botoes {
@@ -436,15 +458,28 @@
 
         <!-- CONTROLES (SÓ VISÍVEL PARA ADMIN) -->
         <div class="controles" id="controles" style="display: none;">
+            <!-- CONTROLE PARA ITENS EXISTENTES -->
             <div class="input-group">
                 <select id="selectProduto">
                     <option value="">Selecione o medicamento</option>
                 </select>
                 <input type="number" id="inputQuantidade" placeholder="Qtd" min="1" value="1">
             </div>
-            <div class="botoes">
+            
+            <!-- CONTROLE PARA NOVOS ITENS (SEU CAMPO ADICIONADO) -->
+            <div class="input-group-duplo">
+                <input type="text" id="inputNovoProduto" placeholder="Nome do novo medicamento">
+                <input type="text" id="inputCategoria" placeholder="Categoria">
+            </div>
+            <div class="input-group-duplo">
+                <input type="number" id="inputQuantidadeInicial" placeholder="Qtd inicial" min="0" value="0">
+                <input type="number" id="inputEstoqueMinimo" placeholder="Estoque mínimo" min="1" value="10">
+            </div>
+            
+            <div class="botoes-triplo">
                 <button class="btn-entrada" onclick="entradaEstoque()">➕ ENTRADA</button>
                 <button class="btn-saida" onclick="saidaEstoque()">➖ SAÍDA</button>
+                <button class="btn-novo" onclick="adicionarNovoItem()">🆕 NOVO ITEM</button>
             </div>
         </div>
 
@@ -655,6 +690,59 @@
                 console.error('Erro na sincronização:', e);
                 mostrarNotificacao('❌ Código inválido! Verifique e tente novamente.', 'error');
             }
+        }
+
+        // ADICIONAR NOVO ITEM (SUA FUNÇÃO ADICIONADA)
+        function adicionarNovoItem() {
+            if (!adminLogado) {
+                mostrarNotificacao('🔒 Acesso restrito! Faça login como administrador.', 'error');
+                abrirLogin();
+                return;
+            }
+            
+            const nome = document.getElementById('inputNovoProduto').value.trim();
+            const categoria = document.getElementById('inputCategoria').value.trim();
+            const quantidade = parseInt(document.getElementById('inputQuantidadeInicial').value);
+            const minimo = parseInt(document.getElementById('inputEstoqueMinimo').value);
+            
+            if (!nome || !categoria) {
+                mostrarNotificacao('❌ Preencha o nome e categoria do novo medicamento!', 'error');
+                return;
+            }
+            
+            if (isNaN(quantidade) || quantidade < 0) {
+                mostrarNotificacao('❌ Informe uma quantidade inicial válida!', 'error');
+                return;
+            }
+            
+            if (isNaN(minimo) || minimo < 1) {
+                mostrarNotificacao('❌ Informe um estoque mínimo válido!', 'error');
+                return;
+            }
+            
+            // Verificar se item já existe
+            if (medicamentos.some(med => med.nome.toLowerCase() === nome.toLowerCase())) {
+                mostrarNotificacao('❌ Este medicamento já existe na lista!', 'error');
+                return;
+            }
+            
+            // Adicionar novo item
+            medicamentos.push({
+                nome: nome,
+                categoria: categoria,
+                quantidade: quantidade,
+                minimo: minimo
+            });
+            
+            // Limpar campos
+            document.getElementById('inputNovoProduto').value = '';
+            document.getElementById('inputCategoria').value = '';
+            document.getElementById('inputQuantidadeInicial').value = '0';
+            document.getElementById('inputEstoqueMinimo').value = '10';
+            
+            salvarEstoque();
+            carregarEstoque();
+            mostrarNotificacao(`✅ ${nome} adicionado ao estoque com sucesso!`);
         }
 
         // GERAR PDF
