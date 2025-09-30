@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -128,9 +127,14 @@
 
         .input-group {
             display: grid;
-            grid-template-columns: 1fr auto;
             gap: 10px;
             margin-bottom: 15px;
+        }
+
+        .input-group-duplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         select, input {
@@ -145,6 +149,12 @@
         .botoes {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .botoes-triplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
         }
 
@@ -167,6 +177,11 @@
             color: white;
         }
 
+        .btn-novo {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
         .btn-relatorio {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
@@ -174,8 +189,22 @@
             margin-bottom: 10px;
         }
 
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
         .btn-login {
             background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
             width: 100%;
             margin-bottom: 10px;
@@ -309,7 +338,15 @@
                 grid-template-columns: 1fr;
             }
             
+            .input-group-duplo {
+                grid-template-columns: 1fr;
+            }
+            
             .botoes {
+                grid-template-columns: 1fr;
+            }
+            
+            .botoes-triplo {
                 grid-template-columns: 1fr;
             }
             
@@ -336,9 +373,17 @@
         <button class="btn-relatorio" onclick="gerarRelatorio()">
             📊 GERAR RELATÓRIO COMPLETO
         </button>
+
+        <button class="btn-pdf" onclick="gerarPDF()">
+            📄 BAIXAR RELATÓRIO PDF
+        </button>
         
         <button class="btn-login" onclick="abrirLogin()" id="btnLogin">
             🔑 ACESSO ADMINISTRADOR
+        </button>
+
+        <button class="btn-reset" onclick="resetarEstoque()" id="btnReset">
+            🔄 RESTAURAR ESTOQUE PADRÃO
         </button>
 
         <!-- ESTOQUE -->
@@ -348,15 +393,28 @@
 
         <!-- CONTROLES (SÓ VISÍVEL PARA ADMIN) -->
         <div class="controles" id="controles" style="display: none;">
+            <!-- CONTROLE PARA ITENS EXISTENTES -->
             <div class="input-group">
                 <select id="selectProduto">
                     <option value="">Selecione o medicamento</option>
                 </select>
                 <input type="number" id="inputQuantidade" placeholder="Qtd" min="1" value="1">
             </div>
-            <div class="botoes">
+            
+            <!-- CONTROLE PARA NOVOS ITENS -->
+            <div class="input-group-duplo">
+                <input type="text" id="inputNovoProduto" placeholder="Nome do novo medicamento">
+                <input type="text" id="inputCategoria" placeholder="Categoria">
+            </div>
+            <div class="input-group-duplo">
+                <input type="number" id="inputQuantidadeInicial" placeholder="Qtd inicial" min="0" value="0">
+                <input type="number" id="inputEstoqueMinimo" placeholder="Estoque mínimo" min="1" value="10">
+            </div>
+            
+            <div class="botoes-triplo">
                 <button class="btn-entrada" onclick="entradaEstoque()">➕ ENTRADA</button>
                 <button class="btn-saida" onclick="saidaEstoque()">➖ SAÍDA</button>
+                <button class="btn-novo" onclick="adicionarNovoItem()">🆕 NOVO ITEM</button>
             </div>
         </div>
 
@@ -378,9 +436,13 @@
         </div>
     </div>
 
+    <!-- Incluir a biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
     <script>
-        // DADOS EXEMPLO - MEDICAMENTOS HOSPITALARES
-        const medicamentos = [
+        // DADOS INICIAIS - MEDICAMENTOS HOSPITALARES
+        const medicamentosIniciais = [
             { nome: "Dipirona 1g", quantidade: 15, categoria: "Analgésico", minimo: 20 },
             { nome: "Paracetamol 750mg", quantidade: 8, categoria: "Analgésico", minimo: 15 },
             { nome: "Soro Fisiológico 500ml", quantidade: 3, categoria: "Soros", minimo: 10 },
@@ -389,9 +451,33 @@
             { nome: "Insulina Regular", quantidade: 5, categoria: "Hormonal", minimo: 8 }
         ];
 
-        // SENHA DO ADMINISTRADOR (pode ser alterada)
+        // SENHA DO ADMINISTRADOR
         const SENHA_ADMIN = "upa123";
         let adminLogado = false;
+        let medicamentos = [];
+
+        // FUNÇÕES DE ARMAZENAMENTO
+        function salvarEstoque() {
+            localStorage.setItem('quantumStock_upa', JSON.stringify(medicamentos));
+        }
+
+        function carregarEstoqueSalvo() {
+            const estoqueSalvo = localStorage.getItem('quantumStock_upa');
+            if (estoqueSalvo) {
+                return JSON.parse(estoqueSalvo);
+            }
+            return null;
+        }
+
+        function inicializarEstoque() {
+            const estoqueSalvo = carregarEstoqueSalvo();
+            if (estoqueSalvo) {
+                medicamentos = estoqueSalvo;
+            } else {
+                medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
+                salvarEstoque();
+            }
+        }
 
         // ATUALIZAR RELÓGIO
         function atualizarRelogio() {
@@ -402,7 +488,7 @@
             setTimeout(atualizarRelogio, 1000);
         }
 
-        // CARREGAR ESTOQUE
+        // CARREGAR ESTOQUE NA TELA
         function carregarEstoque() {
             const container = document.getElementById('estoqueList');
             const select = document.getElementById('selectProduto');
@@ -526,6 +612,7 @@
             
             medicamentos[index].quantidade += quantidade;
             input.value = 1;
+            salvarEstoque(); // SALVA AS ALTERAÇÕES
             carregarEstoque();
             alert(`✅ ${quantidade} ${medicamentos[index].nome} adicionados ao estoque!`);
         }
@@ -555,8 +642,78 @@
             
             medicamentos[index].quantidade -= quantidade;
             input.value = 1;
+            salvarEstoque(); // SALVA AS ALTERAÇÕES
             carregarEstoque();
             alert(`✅ ${quantidade} ${medicamentos[index].nome} retirados do estoque!`);
+        }
+
+        // ADICIONAR NOVO ITEM
+        function adicionarNovoItem() {
+            if (!adminLogado) {
+                alert('🔒 Acesso restrito! Faça login como administrador.');
+                abrirLogin();
+                return;
+            }
+            
+            const nome = document.getElementById('inputNovoProduto').value.trim();
+            const categoria = document.getElementById('inputCategoria').value.trim();
+            const quantidade = parseInt(document.getElementById('inputQuantidadeInicial').value);
+            const minimo = parseInt(document.getElementById('inputEstoqueMinimo').value);
+            
+            if (!nome || !categoria) {
+                alert('Preencha o nome e categoria do novo medicamento!');
+                return;
+            }
+            
+            if (isNaN(quantidade) || quantidade < 0) {
+                alert('Informe uma quantidade inicial válida!');
+                return;
+            }
+            
+            if (isNaN(minimo) || minimo < 1) {
+                alert('Informe um estoque mínimo válido!');
+                return;
+            }
+            
+            // Verificar se item já existe
+            if (medicamentos.some(med => med.nome.toLowerCase() === nome.toLowerCase())) {
+                alert('❌ Este medicamento já existe na lista!');
+                return;
+            }
+            
+            // Adicionar novo item
+            medicamentos.push({
+                nome: nome,
+                categoria: categoria,
+                quantidade: quantidade,
+                minimo: minimo
+            });
+            
+            // Limpar campos
+            document.getElementById('inputNovoProduto').value = '';
+            document.getElementById('inputCategoria').value = '';
+            document.getElementById('inputQuantidadeInicial').value = '0';
+            document.getElementById('inputEstoqueMinimo').value = '10';
+            
+            salvarEstoque();
+            carregarEstoque();
+            alert(`✅ ${nome} adicionado ao estoque com sucesso!`);
+        }
+
+        // RESETAR ESTOQUE PARA VALORES PADRÃO
+        function resetarEstoque() {
+            if (!adminLogado) {
+                alert('🔒 Acesso restrito! Faça login como administrador.');
+                abrirLogin();
+                return;
+            }
+            
+            if (confirm('⚠️ Tem certeza que deseja restaurar o estoque para os valores padrão? Isso irá sobrescrever todos os dados atuais.')) {
+                medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
+                salvarEstoque();
+                carregarEstoque();
+                alert('✅ Estoque restaurado para os valores padrão!');
+            }
         }
 
         // GERAR RELATÓRIO
@@ -573,7 +730,102 @@
             alert(relatorio);
         }
 
+        // GERAR PDF
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const agora = new Date();
+            const dataHora = agora.toLocaleString('pt-BR');
+            
+            // Cabeçalho
+            doc.setFontSize(20);
+            doc.setTextColor(30, 64, 175);
+            doc.text('RELATÓRIO DE ESTOQUE - UPA GUARULHOS', 105, 15, null, null, 'center');
+            
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Gerado em: ${dataHora}`, 105, 22, null, null, 'center');
+            
+            // Dados para a tabela
+            const tableData = medicamentos.map(med => {
+                let status = 'NORMAL';
+                let corStatus = '#10b981';
+                
+                if (med.quantidade <= med.minimo/2) {
+                    status = 'CRÍTICO';
+                    corStatus = '#dc2626';
+                } else if (med.quantidade <= med.minimo) {
+                    status = 'ALERTA';
+                    corStatus = '#f59e0b';
+                }
+                
+                return [
+                    med.nome,
+                    med.categoria,
+                    med.quantidade,
+                    med.minimo,
+                    status
+                ];
+            });
+            
+            // Criar tabela
+            doc.autoTable({
+                startY: 30,
+                head: [['Medicamento', 'Categoria', 'Quantidade', 'Mínimo', 'Status']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [30, 64, 175],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                bodyStyles: {
+                    textColor: 50
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                didDrawCell: function(data) {
+                    if (data.column.index === 4 && data.cell.raw === 'CRÍTICO') {
+                        doc.setTextColor(220, 38, 38);
+                    } else if (data.column.index === 4 && data.cell.raw === 'ALERTA') {
+                        doc.setTextColor(245, 158, 11);
+                    } else if (data.column.index === 4) {
+                        doc.setTextColor(16, 185, 129);
+                    }
+                }
+            });
+            
+            // Estatísticas
+            const totalItens = medicamentos.length;
+            const itensCriticos = medicamentos.filter(med => med.quantidade <= med.minimo/2).length;
+            const itensAlerta = medicamentos.filter(med => med.quantidade <= med.minimo && med.quantidade > med.minimo/2).length;
+            const itensNormais = medicamentos.filter(med => med.quantidade > med.minimo).length;
+            
+            const finalY = doc.lastAutoTable.finalY + 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(30, 30, 30);
+            doc.text(`Total de Itens: ${totalItens}`, 14, finalY);
+            doc.setTextColor(220, 38, 38);
+            doc.text(`Itens Críticos: ${itensCriticos}`, 14, finalY + 7);
+            doc.setTextColor(245, 158, 11);
+            doc.text(`Itens em Alerta: ${itensAlerta}`, 14, finalY + 14);
+            doc.setTextColor(16, 185, 129);
+            doc.text(`Itens Normais: ${itensNormais}`, 14, finalY + 21);
+            
+            // Rodapé
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Sistema QuantumStock - UPA Guarulhos', 105, 280, null, null, 'center');
+            
+            // Salvar PDF
+            doc.save(`relatorio_estoque_upa_${agora.toISOString().split('T')[0]}.pdf`);
+        }
+
         // INICIALIZAR
+        inicializarEstoque();
         atualizarRelogio();
         carregarEstoque();
     </script>
