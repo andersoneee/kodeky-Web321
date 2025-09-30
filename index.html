@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuantumStock • UPA Guarulhos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --primary: #1e40af;  /* AZUL SAÚDE */
@@ -132,13 +134,20 @@
             margin-bottom: 15px;
         }
 
-        select, input {
+        select, input, textarea {
             padding: 12px;
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05);
             color: var(--text);
             font-size: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            resize: vertical;
+            font-family: monospace;
         }
 
         .botoes {
@@ -173,6 +182,13 @@
             margin-bottom: 10px;
         }
 
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
         .btn-login {
             background: linear-gradient(135deg, #7c3aed, #6d28d9);
             color: white;
@@ -182,6 +198,20 @@
 
         .btn-reset {
             background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-exportar {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-importar {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
             color: white;
             width: 100%;
             margin-bottom: 10px;
@@ -248,7 +278,7 @@
             padding: 30px;
             border-radius: 20px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
         }
 
@@ -296,6 +326,16 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 1001;
             display: none;
+        }
+
+        .info-sincronizacao {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
         }
 
         @keyframes pulse {
@@ -355,13 +395,30 @@
             <div class="clock" id="clock">--/--/---- --:--:--</div>
         </div>
 
+        <!-- INFO SINCRONIZAÇÃO -->
+        <div class="info-sincronizacao">
+            🔄 Para sincronizar entre Celular e PC, use os botões EXPORTAR/IMPORTAR abaixo
+        </div>
+
         <!-- BOTÕES SUPERIORES -->
         <button class="btn-relatorio" onclick="gerarRelatorio()">
             📊 GERAR RELATÓRIO COMPLETO
         </button>
+
+        <button class="btn-pdf" onclick="gerarPDF()">
+            📄 BAIXAR RELATÓRIO PDF
+        </button>
         
         <button class="btn-login" onclick="abrirLogin()" id="btnLogin">
             🔑 ACESSO ADMINISTRADOR
+        </button>
+
+        <button class="btn-exportar" onclick="exportarDados()">
+            📤 EXPORTAR DADOS (Para PC)
+        </button>
+
+        <button class="btn-importar" onclick="abrirImportacao()">
+            📥 IMPORTAR DADOS (Do Celular)
         </button>
 
         <button class="btn-reset" onclick="resetarEstoque()" id="btnReset">
@@ -405,6 +462,21 @@
         </div>
     </div>
 
+    <!-- MODAL IMPORTAR -->
+    <div class="modal" id="modalImportar">
+        <div class="modal-content">
+            <h2>📥 IMPORTAR DADOS</h2>
+            <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;">
+                Cole abaixo o código que você copiou do outro dispositivo:
+            </p>
+            <textarea id="dadosImportar" class="modal-input" placeholder="Cole o código aqui..."></textarea>
+            <div class="modal-botoes">
+                <button class="btn-confirmar" onclick="importarDados()">✅ IMPORTAR</button>
+                <button class="btn-cancelar" onclick="fecharImportacao()">❌ CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // DADOS INICIAIS - MEDICAMENTOS HOSPITALARES
         const medicamentosIniciais = [
@@ -430,18 +502,19 @@
             
             setTimeout(() => {
                 notificacao.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
-        // FUNÇÕES DE ARMAZENAMENTO - CHAVE ÚNICA
+        // FUNÇÕES DE ARMAZENAMENTO
         function salvarEstoque() {
             try {
                 const dados = {
                     medicamentos: medicamentos,
-                    ultimaAtualizacao: new Date().toISOString()
+                    ultimaAtualizacao: new Date().toISOString(),
+                    versao: '2.0'
                 };
-                localStorage.setItem('quantumStock_upa_guarulhos_v2', JSON.stringify(dados));
-                console.log('✅ Estoque salvo:', dados);
+                localStorage.setItem('quantumStock_upa_guarulhos', JSON.stringify(dados));
+                console.log('✅ Estoque salvo localmente');
             } catch (e) {
                 console.error('❌ Erro ao salvar:', e);
             }
@@ -449,10 +522,10 @@
 
         function carregarEstoqueSalvo() {
             try {
-                const dadosSalvos = localStorage.getItem('quantumStock_upa_guarulhos_v2');
+                const dadosSalvos = localStorage.getItem('quantumStock_upa_guarulhos');
                 if (dadosSalvos) {
                     const dados = JSON.parse(dadosSalvos);
-                    console.log('📦 Estoque carregado:', dados);
+                    console.log('📦 Estoque carregado localmente');
                     return dados.medicamentos;
                 }
             } catch (e) {
@@ -465,12 +538,200 @@
             const estoqueSalvo = carregarEstoqueSalvo();
             if (estoqueSalvo && estoqueSalvo.length > 0) {
                 medicamentos = estoqueSalvo;
-                mostrarNotificacao('📦 Estoque carregado com sucesso!');
+                mostrarNotificacao('📦 Dados locais carregados!');
             } else {
-                // Cria uma cópia profunda dos dados iniciais
                 medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
                 salvarEstoque();
                 mostrarNotificacao('🆕 Estoque inicial criado!');
+            }
+        }
+
+        // GERAR PDF
+        function gerarPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Data e hora atual
+                const agora = new Date();
+                const dataHora = agora.toLocaleString('pt-BR');
+
+                // Cabeçalho
+                doc.setFillColor(30, 64, 175);
+                doc.rect(0, 0, 210, 40, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(20);
+                doc.setFont('helvetica', 'bold');
+                doc.text('🏥 UPA GUARULHOS', 105, 15, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text('Relatório de Estoque de Medicamentos', 105, 25, { align: 'center' });
+                doc.text(`Gerado em: ${dataHora}`, 105, 32, { align: 'center' });
+
+                // Resetar cor do texto
+                doc.setTextColor(0, 0, 0);
+
+                // Dados para a tabela
+                const tableData = medicamentos.map(med => {
+                    let status = 'NORMAL';
+                    let corStatus = '#10b981';
+                    
+                    if (med.quantidade <= med.minimo / 2) {
+                        status = 'CRÍTICO';
+                        corStatus = '#dc2626';
+                    } else if (med.quantidade <= med.minimo) {
+                        status = 'ALERTA';
+                        corStatus = '#f59e0b';
+                    }
+
+                    return [
+                        med.nome,
+                        med.categoria,
+                        med.quantidade.toString(),
+                        med.minimo.toString(),
+                        status
+                    ];
+                });
+
+                // Adicionar tabela
+                doc.autoTable({
+                    startY: 45,
+                    head: [['Medicamento', 'Categoria', 'Quantidade', 'Mínimo', 'Status']],
+                    body: tableData,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 10,
+                        cellPadding: 3,
+                    },
+                    headStyles: {
+                        fillColor: [30, 64, 175],
+                        textColor: 255,
+                        fontStyle: 'bold'
+                    },
+                    didDrawCell: function(data) {
+                        // Colorir células de status
+                        if (data.column.index === 4 && data.cell.section === 'body') {
+                            const status = data.cell.raw;
+                            if (status === 'CRÍTICO') {
+                                doc.setFillColor(220, 38, 38);
+                            } else if (status === 'ALERTA') {
+                                doc.setFillColor(245, 158, 11);
+                            } else {
+                                doc.setFillColor(16, 185, 129);
+                            }
+                            doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(status, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2 + 2, { align: 'center' });
+                            return false; // Impede o desenho padrão
+                        }
+                    }
+                });
+
+                // Estatísticas
+                const finalY = doc.lastAutoTable.finalY + 10;
+                const criticos = medicamentos.filter(med => med.quantidade <= med.minimo / 2).length;
+                const alertas = medicamentos.filter(med => med.quantidade <= med.minimo && med.quantidade > med.minimo / 2).length;
+                const normais = medicamentos.length - criticos - alertas;
+
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text('RESUMO DO ESTOQUE', 14, finalY);
+                
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`✅ Itens em situação normal: ${normais}`, 20, finalY + 8);
+                doc.text(`⚠️  Itens em alerta: ${alertas}`, 20, finalY + 16);
+                doc.text(`🚨 Itens críticos: ${criticos}`, 20, finalY + 24);
+                doc.text(`📊 Total de itens monitorados: ${medicamentos.length}`, 20, finalY + 32);
+
+                // Rodapé
+                const pageHeight = doc.internal.pageSize.height;
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Sistema QuantumStock - UPA Guarulhos • Relatório gerado automaticamente', 105, pageHeight - 10, { align: 'center' });
+
+                // Salvar PDF
+                const nomeArquivo = `relatorio_estoque_upa_${agora.toISOString().split('T')[0]}.pdf`;
+                doc.save(nomeArquivo);
+                
+                mostrarNotificacao('✅ PDF gerado e baixado com sucesso!');
+
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                mostrarNotificacao('❌ Erro ao gerar PDF. Tente novamente.', 'error');
+            }
+        }
+
+        // EXPORTAR DADOS
+        function exportarDados() {
+            const dados = {
+                medicamentos: medicamentos,
+                ultimaAtualizacao: new Date().toISOString(),
+                exportadoEm: new Date().toLocaleString('pt-BR')
+            };
+            
+            const dadosString = JSON.stringify(dados, null, 2);
+            
+            // Criar um arquivo de texto para download
+            const blob = new Blob([dadosString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `estoque_upa_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Também copia para a área de transferência
+            navigator.clipboard.writeText(dadosString).then(() => {
+                mostrarNotificacao('✅ Dados exportados e copiados para área de transferência!');
+            }).catch(() => {
+                mostrarNotificacao('✅ Dados exportados como arquivo!');
+            });
+        }
+
+        // IMPORTAR DADOS
+        function abrirImportacao() {
+            document.getElementById('modalImportar').style.display = 'flex';
+            document.getElementById('dadosImportar').focus();
+        }
+
+        function fecharImportacao() {
+            document.getElementById('modalImportar').style.display = 'none';
+            document.getElementById('dadosImportar').value = '';
+        }
+
+        function importarDados() {
+            const dadosString = document.getElementById('dadosImportar').value.trim();
+            
+            if (!dadosString) {
+                mostrarNotificacao('❌ Cole os dados para importar!', 'error');
+                return;
+            }
+            
+            try {
+                const dados = JSON.parse(dadosString);
+                
+                if (!dados.medicamentos || !Array.isArray(dados.medicamentos)) {
+                    throw new Error('Formato inválido');
+                }
+                
+                // Verificar se a estrutura dos dados é compatível
+                const primeiroItem = dados.medicamentos[0];
+                if (!primeiroItem.nome || typeof primeiroItem.quantidade !== 'number') {
+                    throw new Error('Estrutura de dados incompatível');
+                }
+                
+                medicamentos = dados.medicamentos;
+                salvarEstoque();
+                carregarEstoque();
+                fecharImportacao();
+                
+                mostrarNotificacao(`✅ ${dados.medicamentos.length} itens importados com sucesso!`);
+                
+            } catch (e) {
+                console.error('Erro na importação:', e);
+                mostrarNotificacao('❌ Dados inválidos! Verifique o formato.', 'error');
             }
         }
 
@@ -578,7 +839,7 @@
                 document.getElementById('btnLogin').textContent = '🔓 ADMINISTRADOR LOGADO';
                 document.getElementById('btnLogin').style.background = 'linear-gradient(135deg, #10b981, #059669)';
                 fecharLogin();
-                carregarEstoque(); // Recarrega para mostrar os selects
+                carregarEstoque();
                 mostrarNotificacao('✅ Acesso administrativo concedido!');
             } else {
                 mostrarNotificacao('❌ Senha incorreta! Acesso negado.', 'error');
@@ -609,7 +870,7 @@
             medicamentos[index].quantidade += quantidade;
             input.value = 1;
             
-            salvarEstoque(); // SALVA AS ALTERAÇÕES
+            salvarEstoque();
             carregarEstoque();
             
             mostrarNotificacao(`✅ ${quantidade} ${medicamentos[index].nome} adicionados! (${quantidadeAntiga} → ${medicamentos[index].quantidade})`);
@@ -642,13 +903,13 @@
             medicamentos[index].quantidade -= quantidade;
             input.value = 1;
             
-            salvarEstoque(); // SALVA AS ALTERAÇÕES
+            salvarEstoque();
             carregarEstoque();
             
             mostrarNotificacao(`✅ ${quantidade} ${medicamentos[index].nome} retirados! (${quantidadeAntiga} → ${medicamentos[index].quantidade})`);
         }
 
-        // RESETAR ESTOQUE PARA VALORES PADRÃO
+        // RESETAR ESTOQUE
         function resetarEstoque() {
             if (!adminLogado) {
                 mostrarNotificacao('🔒 Acesso restrito! Faça login como administrador.', 'error');
@@ -656,7 +917,7 @@
                 return;
             }
             
-            if (confirm('⚠️ Tem certeza que deseja restaurar o estoque para os valores padrão? Isso irá sobrescrever todos os dados atuais.')) {
+            if (confirm('⚠️ Tem certeza que deseja restaurar o estoque para os valores padrão?')) {
                 medicamentos = JSON.parse(JSON.stringify(medicamentosIniciais));
                 salvarEstoque();
                 carregarEstoque();
@@ -675,7 +936,6 @@
                 relatorio += `${med.nome}: ${med.quantidade} unidades - ${status}\n`;
             });
             
-            // Mostra quantos itens estão em alerta/crítico
             const criticos = medicamentos.filter(med => med.quantidade <= med.minimo/2).length;
             const alertas = medicamentos.filter(med => med.quantidade <= med.minimo && med.quantidade > med.minimo/2).length;
             
@@ -687,35 +947,10 @@
             alert(relatorio);
         }
 
-        // VERIFICAR SE OS DADOS ESTÃO SENDO SALVOS
-        function verificarArmazenamento() {
-            const dados = localStorage.getItem('quantumStock_upa_guarulhos_v2');
-            if (dados) {
-                console.log('✅ Dados encontrados no localStorage');
-                const parsed = JSON.parse(dados);
-                console.log('Última atualização:', parsed.ultimaAtualizacao);
-                console.log('Medicamentos:', parsed.medicamentos);
-            } else {
-                console.log('❌ Nenhum dado encontrado no localStorage');
-            }
-        }
-
         // INICIALIZAR
-        console.log('🔄 Inicializando sistema...');
         inicializarEstoque();
         atualizarRelogio();
         carregarEstoque();
-        verificarArmazenamento();
-
-        // Mostra mensagem de boas-vindas
-        setTimeout(() => {
-            const estoqueSalvo = carregarEstoqueSalvo();
-            if (estoqueSalvo) {
-                console.log('✅ Sistema carregado com dados existentes');
-            } else {
-                console.log('🆕 Sistema iniciado com dados padrão');
-            }
-        }, 1000);
     </script>
 </body>
 </html>
